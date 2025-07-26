@@ -1,17 +1,61 @@
 # Getting Started
 
-This guide will walk you through creating your first AvelPress application. We'll build a simple plugin that demonstrates the core concepts of the framework.
+This guide will walk you through creating your first AvelPress application. We'll build a simple plugin that demonstrates the core concepts of the framework using the AvelPress CLI.
 
-## Creating Your First Plugin
+## Installing the AvelPress CLI
 
-Let's create a simple "Task Manager" plugin to demonstrate AvelPress capabilities using the AvelPress CLI.
+The AvelPress CLI is a powerful command-line tool that helps you scaffold, develop, and build AvelPress applications quickly and efficiently.
 
-### 1. Create the Plugin with CLI
+### Requirements
 
-First, use the AvelPress CLI to create your new plugin:
+- PHP 7.4 or higher
+- Composer
+- WordPress development environment
+
+### Installation
 
 ```bash
-avel new acme/task-manager
+# Clone the CLI repository
+git clone https://github.com/avelpress/avelpress-cli.git
+cd avelpress-cli
+
+# Install dependencies
+composer install
+
+# Make the CLI globally available (optional)
+# On Unix/Linux/macOS:
+chmod +x bin/avel
+sudo ln -s /path/to/avelpress-cli/bin/avel /usr/local/bin/avel
+
+# On Windows, add the bin directory to your PATH environment variable
+```
+
+## Available CLI Commands
+
+The AvelPress CLI provides the following commands:
+
+- `avel new` - Create a new AvelPress application (plugin or theme)
+- `avel make:controller` - Generate a new controller
+- `avel make:model` - Generate a new model
+- `avel make:migration` - Generate a new database migration
+- `avel build` - Build a distribution package of your application
+
+## Testing Your Plugin
+
+### 1. Activate the Plugin
+
+1. Upload your plugin to `/wp-content/plugins/`
+2. Activate it in the WordPress admin
+
+### 2. Test API Endpoints
+
+You can also create a theme instead:
+```bash
+avel new acme/my-theme --type=theme
+```
+
+After creation, navigate to your project and install dependencies:
+```bash
 cd acme-task-manager
 composer install
 ```
@@ -21,7 +65,9 @@ This will generate the following structure:
 ```
 acme-task-manager/
 ├── acme-task-manager.php           # Main plugin file
+├── avelpress.config.php           # Build configuration
 ├── composer.json
+├── .gitignore
 ├── assets/
 ├── src/
 │   ├── app/
@@ -47,15 +93,37 @@ acme-task-manager/
 
 ### 2. Understanding the Generated Files
 
-The CLI has already created the basic structure. Let's examine the key files:
+The CLI has created the basic structure with several important files:
+
+#### Build Configuration (`avelpress.config.php`)
+
+```php
+<?php
+
+return [
+    'build' => [
+        'prefixer' => [
+            'namespace_prefix' => 'Acme\\TaskManager\\',
+            'packages' => [
+                'avelpress/avelpress',
+            ]
+        ]
+    ]
+];
+```
+
+This configuration file is used by the `avel build` command to:
+- Add namespace prefixes to vendor packages to prevent conflicts
+- Specify which vendor packages to include in the build
+- Configure the build process for distribution
 
 #### Main Plugin File (`acme-task-manager.php`)
 
 ```php
 <?php
 /**
- * Plugin Name: Acme Task-manager
- * Description: A new AvelPress plugin.
+ * Plugin Name: Task Manager Pro
+ * Description: A comprehensive task management system for WordPress with advanced features.
  * Version: 1.0.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -77,6 +145,8 @@ AvelPress::init( 'acme-task-manager', [
 	'base_path' => ACME_TASK_MANAGER_PLUGIN_PATH . 'src',
 ] );
 ```
+
+Notice how the CLI uses the display name and description you provided during project creation.
 
 #### Configuration (`src/config/app.php`)
 
@@ -134,7 +204,7 @@ class AppServiceProvider extends ServiceProvider {
 
 ### 3. Building the Task Manager
 
-Now let's add the functionality to create a task management system.
+Now let's add the functionality to create a task management system using the CLI generators.
 
 #### Database Migration
 
@@ -142,6 +212,18 @@ Use the AvelPress CLI to create a migration:
 
 ```bash
 avel make:migration create_tasks_table
+```
+
+**Advanced Migration Options:**
+```bash
+# Create migration in a specific module
+avel make:migration create_tasks_table --module=TaskManager
+
+# Create migration with app-id prefix for table names
+avel make:migration create_tasks_table --app-id=tm
+
+# Create migration in custom path
+avel make:migration create_tasks_table --path=custom/path/migrations
 ```
 
 This will create a migration file in `src/database/migrations/` with a timestamp prefix (e.g., `2024_07_22_143052_create_tasks_table.php`).
@@ -196,9 +278,35 @@ public function up(): void {
 > - `add_column_to_tasks_table` - Modifies existing table
 > - Use `--app-id=your-app` to prefix table names automatically
 
+> **Note:** When using the `timestamps()` method, the columns `created_at` and `updated_at` will be automatically created in the table to record the creation and update dates of each record.
+
 #### Model
 
-Create `src/app/Models/Task.php`:
+Use the AvelPress CLI to create a model:
+
+```bash
+avel make:model Task --timestamps
+```
+
+**Advanced Model Options:**
+```bash
+# Create model with fillable attributes
+avel make:model Task --fillable=title,description,completed --timestamps
+
+# Create model in a specific module
+avel make:model Task --module=TaskManager --timestamps
+
+# Create model with custom table name
+avel make:model Task --table=custom_tasks --timestamps
+
+# Create model with table prefix
+avel make:model Task --prefix=tm_ --timestamps
+
+# Create model in custom path
+avel make:model Task --path=src/app/Custom/Models --timestamps
+```
+
+This will create `src/app/Models/Task.php`:
 
 ```php
 <?php
@@ -209,112 +317,191 @@ use AvelPress\Database\Eloquent\Model;
 
 defined( 'ABSPATH' ) || exit;
 
-class Task extends Model
-{
-    protected $table = 'tasks';
+class Task extends Model {
 
-    protected $fillable = [
-        'title',
-        'description',
-        'completed'
-    ];
+	/**
+	 * The attributes that are mass assignable.
+	 */
+	protected $fillable = [
+		'title',
+		'description', 
+		'completed'
+	];
 
-    public $timestamps = true;
+	/**
+	 * Indicates if the model should be timestamped.
+	 */
+	public $timestamps = true;
 
-    // Scope for completed tasks
-    public function scopeCompleted($query)
-    {
-        return $query->where('completed', true);
-    }
-
-    // Scope for pending tasks
-    public function scopePending($query)
-    {
-        return $query->where('completed', false);
-    }
 }
 ```
 
+The CLI automatically:
+- Creates the model with proper namespace based on your project structure
+- Sets up fillable attributes if provided via `--fillable` option
+- Enables timestamps if `--timestamps` flag is used
+- Uses proper WordPress coding standards
+- Detects and applies the correct namespace from your project configuration
+
+> **Note:** By default, AvelPress (like Laravel) expects the table name to follow naming conventions. In this example, our `Task` model expects a table named `tasks`. The difference is that AvelPress automatically detects and applies the WordPress table prefix (e.g., `wp_tasks` if your prefix is `wp_`), so you don't need to make any manual adjustments regardless of what prefix your WordPress installation uses.
+
+- [See More About Models](/guide/models/eloquent.md)
+
 #### Controller
 
-Create `src/app/Controllers/TaskController.php`:
+Use the AvelPress CLI to create a controller:
+
+```bash
+avel make:controller TaskController --resource
+```
+
+**Advanced Controller Options:**
+```bash
+# Create controller in a specific module
+avel make:controller TaskController --module=TaskManager --resource
+
+# Create controller in custom path
+avel make:controller TaskController --path=src/app/Custom/Controllers --resource
+
+# Create simple controller without resource methods
+avel make:controller TaskController
+
+# Create API controller in a module
+avel make:controller Api/TaskController --module=TaskManager --resource
+```
+
+This will create `src/app/Http/Controllers/TaskController.php` with all CRUD methods:
 
 ```php
 <?php
 
-namespace Acme\TaskManager\App\Controllers;
+namespace Acme\TaskManager\App\Http\Controllers;
 
-use Acme\TaskManager\App\Models\Task;
 use AvelPress\Routing\Controller;
-use AvelPress\Http\Json\JsonResource;
 
 defined( 'ABSPATH' ) || exit;
 
-class TaskController extends Controller
-{
-    public function index()
-    {
-        $tasks = Task::all();
+class TaskController extends Controller {
 
-        return JsonResource::collection($tasks);
-    }
+	/**
+	 * Display a listing of the resource.
+	 */
+	public function index() {
+		//
+	}
 
-    public function store($request)
-    {
-        $task = Task::create([
-            'title' => $request->get_param('title'),
-            'description' => $request->get_param('description'),
-            'completed' => false
-        ]);
+	/**
+	 * Show the form for creating a new resource.
+	 */
+	public function create() {
+		//
+	}
 
-        return new JsonResource($task);
-    }
+	/**
+	 * Store a newly created resource in storage.
+	 */
+	public function store($request) {
+		//
+	}
 
-    public function show($request)
-    {
-        $id = $request->get_param('id');
-        $task = Task::find($id);
+	/**
+	 * Display the specified resource.
+	 */
+	public function show($request) {
+		//
+	}
 
-        if (!$task) {
-            return new \WP_Error('task_not_found', 'Task not found', ['status' => 404]);
-        }
+	/**
+	 * Show the form for editing the specified resource.
+	 */
+	public function edit($request) {
+		//
+	}
 
-        return new JsonResource($task);
-    }
+	/**
+	 * Update the specified resource in storage.
+	 */
+	public function update($request) {
+		//
+	}
 
-    public function update($request)
-    {
-        $id = $request->get_param('id');
-        $task = Task::find($id);
+	/**
+	 * Remove the specified resource from storage.
+	 */
+	public function destroy($request) {
+		//
+	}
 
-        if (!$task) {
-            return new \WP_Error('task_not_found', 'Task not found', ['status' => 404]);
-        }
-
-        $task->update([
-            'title' => $request->get_param('title') ?: $task->title,
-            'description' => $request->get_param('description') ?: $task->description,
-            'completed' => $request->get_param('completed') ?? $task->completed
-        ]);
-
-        return new JsonResource($task);
-    }
-
-    public function destroy($request)
-    {
-        $id = $request->get_param('id');
-        $task = Task::find($id);
-
-        if (!$task) {
-            return new \WP_Error('task_not_found', 'Task not found', ['status' => 404]);
-        }
-
-        $task->delete();
-
-        return ['message' => 'Task deleted successfully'];
-    }
 }
 ```
+
+Now you can implement the business logic for each method. For example:
+
+```php
+public function index() {
+	$tasks = Task::all();
+	return JsonResource::collection($tasks);
+}
+
+public function store($request) {
+	$task = Task::create([
+		'title' => $request->get_param('title'),
+		'description' => $request->get_param('description'),
+		'completed' => false
+	]);
+	
+	return new JsonResource($task);
+}
+
+public function show($request) {
+	$id = $request->get_param('id');
+	$task = Task::find($id);
+	
+	if (!$task) {
+		return new \WP_Error('task_not_found', 'Task not found', ['status' => 404]);
+	}
+	
+	return new JsonResource($task);
+}
+
+public function update($request) {
+	$id = $request->get_param('id');
+	$task = Task::find($id);
+	
+	if (!$task) {
+		return new \WP_Error('task_not_found', 'Task not found', ['status' => 404]);
+	}
+	
+	$task->update([
+		'title' => $request->get_param('title') ?: $task->title,
+		'description' => $request->get_param('description') ?: $task->description,
+		'completed' => $request->get_param('completed') ?? $task->completed
+	]);
+	
+	return new JsonResource($task);
+}
+
+public function destroy($request) {
+	$id = $request->get_param('id');
+	$task = Task::find($id);
+	
+	if (!$task) {
+		return new \WP_Error('task_not_found', 'Task not found', ['status' => 404]);
+	}
+	
+	$task->delete();
+	
+	return ['message' => 'Task deleted successfully'];
+}
+```
+
+The CLI automatically:
+- Creates the controller with proper namespace based on your project structure
+- Includes all CRUD methods when using `--resource` flag
+- Uses proper WordPress coding standards
+- Places the controller in the correct directory structure
+- Supports modular architecture when `--module` option is used
+- Automatically detects and applies the correct namespace from your project configuration
 
 #### Routes
 
@@ -337,14 +524,102 @@ Route::prefix('task-manager/v1')->guards(['edit_posts'])->group(function () {
 });
 ```
 
-## Testing Your Plugin
+## Building and Distributing Your Plugin
 
-### 1. Activate the Plugin
+AvelPress CLI provides a powerful build system that creates production-ready distributions of your plugin.
 
-1. Upload your plugin to `/wp-content/plugins/`
-2. Activate it in the WordPress admin
+### Build Configuration
 
-### 2. Test API Endpoints
+The `avelpress.config.php` file controls how your plugin is built:
+
+```php
+<?php
+
+return [
+    'build' => [
+        'prefixer' => [
+            'namespace_prefix' => 'Acme\\TaskManager\\',
+            'packages' => [
+                'avelpress/avelpress',
+                // Add other vendor packages you want to include
+            ]
+        ]
+    ]
+];
+```
+
+### Building Your Plugin
+
+To create a distribution package:
+
+```bash
+avel build
+```
+
+This command will:
+
+1. **Check Requirements**: Verify that all necessary files and configurations are present
+2. **Collect Dependencies**: Gather all vendor packages specified in the configuration
+3. **Namespace Prefixing**: Add namespace prefixes to prevent conflicts with other plugins
+4. **Process Source Code**: Copy and process your `src/` directory, updating use statements for vendor packages
+5. **Process Vendor Packages**: Copy and prefix vendor package namespaces
+6. **Copy Assets**: Include your `assets/` directory and other necessary files
+7. **Create Distribution**: Generate both a folder and ZIP file in the `dist/` directory
+
+**Build Output:**
+```
+Building distribution package for: acme-task-manager
+Using namespace prefix: Acme\TaskManager
+Created directory: dist/
+Created directory: dist/acme-task-manager/
+Copied and processed: src/
+Copied and processed vendor package: avelpress/avelpress
+Copied and processed Composer autoload files
+Copied: assets/
+Copied and processed: acme-task-manager.php
+Copied: README.md
+Created: acme-task-manager.zip
+
+Build completed successfully!
+Distribution files created in: dist/
+- Folder: dist/acme-task-manager/
+- ZIP: dist/acme-task-manager.zip
+```
+
+### Build Features
+
+#### Namespace Prefixing
+The build system automatically prefixes namespaces to prevent conflicts:
+- **Vendor packages**: All specified packages get prefixed namespaces
+- **Source code**: Use statements for vendor packages are updated
+- **Autoload files**: Composer autoload files are processed and updated
+
+#### Automatic File Processing
+- **PHP files**: Namespace and use statement processing
+- **Non-PHP files**: Copied directly without modification
+- **Main plugin file**: Use statements updated for vendor packages
+- **Composer autoload**: All autoload files processed and updated
+
+#### ZIP Extension Support
+The build command includes automatic ZIP extension detection:
+- If ZIP extension is available: Creates both folder and ZIP file
+- If ZIP extension is missing: Shows installation instructions but continues with folder creation
+- No build interruption due to missing ZIP extension
+
+**ZIP Extension Installation:**
+```bash
+# Ubuntu/Debian
+sudo apt-get install php-zip
+
+# CentOS/RHEL  
+sudo yum install php-zip
+
+# Windows
+# Uncomment extension=zip in php.ini
+
+# Docker
+RUN docker-php-ext-install zip
+```
 
 You can now test your API endpoints:
 
@@ -369,24 +644,198 @@ curl -X PUT "https://yoursite.com/wp-json/task-manager/v1/tasks/1" \
 curl -X DELETE "https://yoursite.com/wp-json/task-manager/v1/tasks/1"
 ```
 
+## CLI Command Reference
+
+### `avel new`
+
+Create a new AvelPress application (plugin or theme).
+
+**Syntax:**
+```bash
+avel new <vendor>/<name> [--type=plugin|theme]
+```
+
+**Options:**
+- `--type` - Application type: `plugin` (default) or `theme`
+
+**Interactive Prompts (for plugins):**
+- Display name (max 80 characters)
+- Short description (max 150 characters)
+
+**Examples:**
+```bash
+# Create a plugin
+avel new acme/task-manager
+
+# Create a theme
+avel new acme/my-theme --type=theme
+```
+
+### `avel make:controller`
+
+Generate a new controller.
+
+**Syntax:**
+```bash
+avel make:controller <name> [options]
+```
+
+**Options:**
+- `--resource` - Generate resource controller with CRUD methods
+- `--module=<name>` - Create controller in specific module
+- `--path=<path>` - Custom controller path (default: `src/app/Http/Controllers`)
+
+**Examples:**
+```bash
+# Basic controller
+avel make:controller TaskController
+
+# Resource controller with CRUD methods
+avel make:controller TaskController --resource
+
+# Controller in module
+avel make:controller TaskController --module=TaskManager --resource
+
+# Controller in custom path
+avel make:controller Api/TaskController --path=src/app/Api/Controllers
+```
+
+### `avel make:model`
+
+Generate a new model.
+
+**Syntax:**
+```bash
+avel make:model <name> [options]
+```
+
+**Options:**
+- `--timestamps` - Enable timestamps for the model
+- `--fillable=<list>` - Comma-separated list of fillable attributes
+- `--table=<name>` - Custom table name
+- `--prefix=<prefix>` - Table prefix
+- `--module=<name>` - Create model in specific module
+- `--path=<path>` - Custom model path (default: `src/app/Models`)
+
+**Examples:**
+```bash
+# Basic model
+avel make:model Task
+
+# Model with timestamps and fillable attributes
+avel make:model Task --timestamps --fillable=title,description,completed
+
+# Model in module
+avel make:model Task --module=TaskManager --timestamps
+
+# Model with custom table
+avel make:model Task --table=custom_tasks --prefix=tm_
+```
+
+### `avel make:migration`
+
+Generate a new database migration.
+
+**Syntax:**
+```bash
+avel make:migration <name> [options]
+```
+
+**Options:**
+- `--module=<name>` - Create migration in specific module
+- `--app-id=<id>` - App ID prefix for table names
+- `--path=<path>` - Custom migration path (default: `src/database/migrations`)
+
+**Examples:**
+```bash
+# Basic migration
+avel make:migration create_tasks_table
+
+# Migration in module
+avel make:migration create_tasks_table --module=TaskManager
+
+# Migration with app-id prefix
+avel make:migration create_tasks_table --app-id=tm
+```
+
+### `avel build`
+
+Build a distribution package of your application.
+
+**Syntax:**
+```bash
+avel build
+```
+
+**Requirements:**
+- Must be run from the root of an AvelPress project
+- Requires `avelpress.config.php` configuration file
+
+**Features:**
+- Namespace prefixing for vendor packages
+- Automatic dependency processing
+- ZIP file creation (if ZIP extension available)
+- Production-ready distribution package
+
+**Configuration:**
+The build process is controlled by `avelpress.config.php`:
+
+```php
+<?php
+return [
+    'build' => [
+        'prefixer' => [
+            'namespace_prefix' => 'YourVendor\\YourPackage\\',
+            'packages' => [
+                'avelpress/avelpress',
+                // Other vendor packages
+            ]
+        ]
+    ]
+];
+```
+
 ## What's Next?
 
-Congratulations! You've created your first AvelPress plugin. Here's what you can explore next:
+Congratulations! You've created your first AvelPress plugin and learned how to use the CLI tools. Here's what you can explore next:
 
-- [Application Structure](/guide/application-structure) - Understand how AvelPress organizes code
-- [Service Providers](/guide/service-providers) - Learn about dependency injection and service containers
+- [Application Structure](/guide/core/application-structure) - Understand how AvelPress organizes code
+- [Service Providers](/guide/core/service-providers) - Learn about dependency injection and service containers
 - [Database Relationships](/guide/database/relationships) - Add relationships between models
 - [JSON Resources](/guide/http/json-resources) - Customize API responses
 - [Validation](/guide/http/validation) - Add request validation
+- [CLI Reference](/guide/core/cli) - Complete CLI command documentation
 
 ## Key Concepts Learned
 
 In this tutorial, you learned:
 
+- **CLI Usage** - How to use the AvelPress CLI to scaffold applications
+- **Project Structure** - Understanding the generated directory structure
 - **Application Initialization** - How to bootstrap AvelPress
 - **Service Providers** - How to organize and register services
-- **Migrations** - How to manage database schema changes
-- **Models** - How to interact with the database using Eloquent-style syntax
-- **Controllers** - How to handle HTTP requests
+- **Migrations** - How to manage database schema changes with CLI generators
+- **Models** - How to create models with various options using CLI
+- **Controllers** - How to generate controllers with CRUD methods
 - **Routing** - How to define API endpoints
-- **JSON Resources** - How to format API responses
+- **Build System** - How to create production-ready distributions
+- **Namespace Prefixing** - How the build system prevents conflicts
+
+## Best Practices
+
+### Project Organization
+- Use modules for complex applications (`--module` option)
+- Follow consistent naming conventions
+- Keep related functionality together
+
+### CLI Usage
+- Use `--resource` flag for CRUD controllers
+- Include `--timestamps` for models that need audit trails
+- Use `--fillable` to explicitly define mass-assignable attributes
+- Use `--app-id` for table prefixing in migrations
+
+### Build and Distribution
+- Always test your build output before distribution
+- Keep your `avelpress.config.php` updated with required packages
+- Use semantic versioning for your releases
+- Include proper documentation in your distribution package

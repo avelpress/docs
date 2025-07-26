@@ -2,11 +2,37 @@
 
 AvelPress provides an Eloquent-style ORM that makes it easy to work with your database. Each database table has a corresponding "Model" that is used to interact with that table.
 
-## Defining Models
+## Creating Models
 
-### Basic Model
+### Using the CLI
 
-Create a model by extending the base `Model` class:
+The easiest way to create a model is using the AvelPress CLI:
+
+```bash
+# Basic model
+avel make:model User
+
+# Model with fillable attributes and timestamps
+avel make:model User --fillable=name,email,status --timestamps
+
+# Model in a specific module
+avel make:model User --module=Auth --fillable=name,email --timestamps
+
+# Model with custom table name and prefix
+avel make:model User --table=wp_custom_users --prefix=custom_ --fillable=name,email
+```
+
+The CLI will automatically:
+- Create the model file with proper namespace
+- Set up fillable attributes if provided
+- Enable timestamps if specified
+- Add table prefix if specified
+- Use proper WordPress coding standards
+- Place the model in the correct directory structure
+
+### Manual Model Creation
+
+You can also create models manually by extending the base `Model` class:
 
 ```php
 <?php
@@ -15,8 +41,9 @@ namespace App\Models;
 
 use AvelPress\Database\Eloquent\Model;
 
-class User extends Model
-{
+defined( 'ABSPATH' ) || exit;
+
+class User extends Model {
     // The table associated with the model
     protected $table = 'users';
 
@@ -41,6 +68,8 @@ class User extends Model
 }
 ```
 
+## Model Configuration
+
 ### Table Names
 
 By convention, the table name is the plural form of the model name in lowercase. If your table name differs, specify it explicitly:
@@ -49,6 +78,17 @@ By convention, the table name is the plural form of the model name in lowercase.
 class User extends Model
 {
     protected $table = 'custom_users_table';
+}
+```
+
+### Table Prefix
+
+If your tables use a custom prefix, you can specify it:
+
+```php
+class User extends Model
+{
+    protected $prefix = 'custom_';
 }
 ```
 
@@ -302,63 +342,6 @@ $user->restore();
 $user->forceDelete();
 ```
 
-## Query Scopes
-
-### Local Scopes
-
-Define reusable query constraints:
-
-```php
-class User extends Model
-{
-    // Scope for active users
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'active');
-    }
-
-    // Scope with parameters
-    public function scopeOfType($query, $type)
-    {
-        return $query->where('type', $type);
-    }
-
-    // Scope for popular users
-    public function scopePopular($query)
-    {
-        return $query->where('followers_count', '>', 1000);
-    }
-}
-```
-
-```php
-// Use scopes
-$activeUsers = User::active()->get();
-
-$premiumUsers = User::active()->ofType('premium')->get();
-
-$popularActiveUsers = User::active()->popular()->get();
-```
-
-### Global Scopes
-
-Apply constraints to all queries for a model:
-
-```php
-class User extends Model
-{
-    protected static function boot()
-    {
-        parent::boot();
-
-        // Always exclude banned users
-        static::addGlobalScope('notBanned', function ($query) {
-            $query->where('status', '!=', 'banned');
-        });
-    }
-}
-```
-
 ## Accessors and Mutators
 
 ### Accessors
@@ -559,17 +542,6 @@ class User extends Model
         'first_name',
         'avatar_url',
     ];
-
-    // Scopes
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'active');
-    }
-
-    public function scopeVerified($query)
-    {
-        return $query->whereNotNull('email_verified_at');
-    }
 
     // Accessors
     public function getFirstNameAttribute()

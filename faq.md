@@ -352,6 +352,134 @@ $migrator->run();
 2. Verify database prefixes
 3. Use WordPress database inspection tools
 
+## CLI and Development Tools
+
+### How do I install the AvelPress CLI?
+
+The AvelPress CLI can be installed from source:
+
+```bash
+git clone https://github.com/avelpress/avelpress-cli.git
+cd avelpress-cli
+composer install
+```
+
+Make the CLI globally available by adding the `bin` directory to your PATH.
+
+### What commands are available in the CLI?
+
+The CLI provides several commands:
+
+- `avel new` - Create new projects (plugins/themes)
+- `avel make:controller` - Generate controllers
+- `avel make:model` - Generate models
+- `avel make:migration` - Generate migrations
+- `avel build` - Build distribution packages
+
+Use `avel list` to see all available commands.
+
+### How does the build command work?
+
+The `avel build` command creates production-ready distributions:
+
+1. Processes your source code with namespace prefixing
+2. Includes only specified vendor packages
+3. Creates both folder and ZIP distributions
+4. Optimizes for WordPress deployment
+
+Requires an `avelpress.config.php` file in your project root.
+
+### What is namespace prefixing in builds?
+
+Namespace prefixing prevents conflicts when multiple plugins use the same dependencies. The build process automatically adds prefixes to:
+
+- Namespace declarations
+- Use statements
+- Class references
+- Function calls
+
+This ensures your plugin works independently of other plugins.
+
+### Can I create custom build configurations?
+
+Yes! Customize your `avelpress.config.php`:
+
+```php
+<?php
+
+return [
+    'build' => [
+        'prefixer' => [
+            'namespace_prefix' => 'MyCompany\\MyPlugin\\',
+            'packages' => [
+                'avelpress/avelpress',
+                'vendor/package-name',
+            ]
+        ]
+    ]
+];
+```
+
+### What if the ZIP extension is not available?
+
+The build command gracefully handles missing ZIP extension:
+
+- Shows a warning with installation instructions
+- Continues building the folder distribution
+- Provides platform-specific setup guidance
+- Doesn't interrupt the build process
+
+### How do I create controllers with CRUD methods?
+
+Use the `--resource` flag:
+
+```bash
+avel make:controller TaskController --resource
+```
+
+This generates index, create, store, show, edit, update, and destroy methods.
+
+### Can I organize code in modules?
+
+Yes! Use the `--module` flag for organized structure:
+
+```bash
+avel make:controller UserController --module=Auth --resource
+avel make:model User --module=Auth --timestamps
+avel make:migration create_users_table --module=Auth
+```
+
+This creates organized folder structures within `src/app/Modules/`.
+
+### How do I handle interactive prompts?
+
+When creating plugins with `avel new`, you'll be prompted for:
+
+- **Display Name**: Human-readable plugin name (max 80 characters)
+- **Short Description**: Brief description for headers (max 150 characters)
+
+These ensure proper WordPress plugin headers and metadata.
+
+### What happens if I try to overwrite existing files?
+
+The CLI protects against accidental overwrites:
+
+- Checks if files already exist
+- Shows error messages for conflicts
+- Suggests using different names or paths
+- Never overwrites without explicit confirmation
+
+### How do I debug CLI issues?
+
+Common CLI troubleshooting:
+
+1. **Command not found**: Check PATH environment variable
+2. **Permission denied**: Verify file permissions (Unix) or run as administrator (Windows)
+3. **Build failures**: Ensure `avelpress.config.php` exists and project structure is correct
+4. **Missing dependencies**: Run `composer install` in CLI directory
+
+Use `avel --help` or `avel <command> --help` for command-specific guidance.
+
 ## Getting Help
 
 ### Where can I find more examples?

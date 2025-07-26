@@ -13,17 +13,15 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Guide', link: '/guide/getting-started' },
-      { text: 'API Reference', link: '/api/overview' },
-      { text: 'Examples', link: '/examples/basic-plugin' },
       { text: 'FAQ', link: '/faq' }
     ],
 
     sidebar: {
       '/guide/': [
         {
-          text: 'Getting Started',
+          text: 'Introduction',
           items: [
-            { text: 'Introduction', link: '/guide/introduction' },
+            { text: 'Whats is AvelPress?', link: '/guide/introduction' },
             { text: 'Installation', link: '/guide/installation' },
             { text: 'Getting Started', link: '/guide/getting-started' },
           ]
@@ -31,19 +29,38 @@ export default defineConfig({
         {
           text: 'Core Concepts',
           items: [
-            { text: 'Application Structure', link: '/guide/application-structure' },
-            { text: 'Service Providers', link: '/guide/service-providers' },
-            { text: 'Dependency Injection', link: '/guide/dependency-injection' },
-            { text: 'Facades', link: '/guide/facades' }
+            { text: 'Application Structure', link: '/guide/core/application-structure' },
+            { text: 'Service Providers', link: '/guide/core/service-providers' },
+            { text: 'Dependency Injection', link: '/guide/core/dependency-injection' },
+            { text: 'Facades', link: '/guide/core/facades' },
+            { text: 'CLI Commands', link: '/guide/core/cli' }
           ]
         },
         {
           text: 'Routing',
           items: [
             { text: 'Basic Routing', link: '/guide/routing/basic' },
-            { text: 'Route Parameters', link: '/guide/routing/parameters' },
-            { text: 'Route Groups', link: '/guide/routing/groups' },
-            { text: 'Controllers', link: '/guide/routing/controllers' }
+            { text: 'Controllers', link: '/guide/routing/controllers' },
+          ]
+        },
+        {
+          text: 'HTTP',
+          items: [
+            { text: 'Validation', link: '/guide/http/validation' },
+            { text: 'Form Requests', link: '/guide/http/form-requests' },
+            { text: 'JSON Resources', link: '/guide/http/json-resources' },
+          ]
+        },
+        {
+          text: 'ORM & Database',
+          items: [
+            { text: 'Getting Started', link: '/guide/models/getting-started' },
+            { text: 'Mass Assignment', link: '/guide/models/mass-assignment' },
+            { text: 'Querying', link: '/guide/models/querying' },
+            { text: 'Creating & Updating', link: '/guide/models/creating-updating' },
+            { text: 'Relationships', link: '/guide/models/relationships' },
+            { text: 'Accessors & Mutators', link: '/guide/models/accessors-mutators' },
+            { text: 'WordPress Integration', link: '/guide/models/wordpress-integration' }
           ]
         },
         {
@@ -56,44 +73,12 @@ export default defineConfig({
             { text: 'Relationships', link: '/guide/database/relationships' },
             { text: 'Collections', link: '/guide/database/collections' }
           ]
-        },
-        {
-          text: 'HTTP',
-          items: [
-            { text: 'JSON Resources', link: '/guide/http/json-resources' },
-            { text: 'Resource Collections', link: '/guide/http/resource-collections' },
-            { text: 'Validation', link: '/guide/http/validation' }
-          ]
         }
       ],
-      '/api/': [
-        {
-          text: 'API Reference',
-          items: [
-            { text: 'Overview', link: '/api/overview' },
-            { text: 'Application', link: '/api/application' },
-            { text: 'Router', link: '/api/router' },
-            { text: 'Model', link: '/api/model' },
-            { text: 'Schema', link: '/api/schema' },
-            { text: 'Facades', link: '/api/facades' }
-          ]
-        }
-      ],
-      '/examples/': [
-        {
-          text: 'Examples',
-          items: [
-            { text: 'Basic Plugin', link: '/examples/basic-plugin' },
-            { text: 'REST API Plugin', link: '/examples/rest-api-plugin' },
-            { text: 'Custom Post Type', link: '/examples/custom-post-type' },
-            { text: 'Admin Dashboard', link: '/examples/admin-dashboard' }
-          ]
-        }
-      ]
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/your-username/avelpress' }
+      { icon: 'github', link: 'https://github.com/avelpress/avelpress' }
     ],
 
     footer: {

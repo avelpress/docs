@@ -1,78 +1,42 @@
 # Introduction
 
-AvelPress is a pure PHP framework designed to streamline the development of WordPress plugins and themes. Inspired by Laravel, it brings a clean and familiar structure to WordPress development without adding unnecessary overhead.
+**AvelPress** is a modern, minimalistic PHP framework designed to revolutionize how you build WordPress plugins and themes. Inspired by Laravel 12, it brings professional structure, boosts your productivity, and integrates web development best practices into the WordPress ecosystem – all without external dependencies or bloat.
 
-## What is AvelPress?
+## Why AvelPress?
 
-AvelPress keeps the native Laravel project architecture intact, including:
+Tired of dealing with complexity and lack of structure in WordPress development? AvelPress is the solution you've been waiting for. It was created to:
 
-- **Database layer** - Complete database abstraction
-- **Migrations** - Version control for your database
-- **Models** - Eloquent-style models for WordPress
-- **Controllers** - Clean separation of concerns
-- **Service Providers** - Modular application bootstrapping
-- **Configurations** - Environment-based configuration
-- **Routes** - Laravel-style routing for WordPress REST API
-- **Collections** - Includes a lightweight and useful implementation of Collections, inspired by Laravel, for convenient data manipulation
-- **Command Line Interface (CLI)** - Comes with a CLI tool called `avel`, similar to Laravel's Artisan, to help automate common development tasks
+- 🏗️ **Modernize Your Architecture:** Adopt a Laravel-inspired structure with routes, controllers, models, and a lightweight Eloquent-like ORM, ensuring organized and easily maintainable code.
+- ⚡ **Ensure Lightness and Performance:** At just 137 KB and built from scratch, AvelPress has no third-party dependencies, guaranteeing maximum performance and a minimal footprint.
+- 🚀 **Boost Your Productivity:** Reusable components, a powerful CLI, and code generation tools accelerate your workflow, allowing you to focus on business logic.
+- 💡 **Simplify Development:** Even for those new to frameworks, AvelPress is easy to learn and use, making WordPress development more accessible and enjoyable.
+- 🛡️ **Prevent Dependency Conflicts:** The `avel build` command generates a ready-to-distribute .zip package, automatically prefixing dependency namespaces to avoid conflicts with other plugins – a smart and lightweight solution focused on what truly matters for WordPress.
 
-All of these components are carefully adapted to work seamlessly within the WordPress ecosystem.
+With AvelPress, you focus on creating amazing features, while the framework handles structure and best practices.
 
-## Goals
+## What's Included?
 
-The goal of AvelPress is to save time and reduce complexity when creating plugins and themes. It allows developers to build scalable WordPress solutions using modern PHP practices while staying lightweight—no external packages, no bloated dependencies, just pure and clean code developed from scratch.
+AvelPress adapts the essence of Laravel's architecture for WordPress, offering the following essential components:
 
-## Key Features
+- **Database Layer:** Complete abstraction for database operations, simplifying queries and data manipulation.
+- **Migrations:** Version control for your database schema, allowing you to evolve your structure safely.
+- **Models:** Eloquent-style models for interacting with your WordPress data in an expressive way.
+- **Controllers:** Clear separation of concerns to organize your business logic.
+- **Service Providers:** Modular application bootstrapping, similar to Laravel.
+- **Configurations:** Easy management of settings for different environments.
+- **Routes:** Laravel-style routing for the WordPress REST API, defining endpoints cleanly.
+- **Collections:** Expressive data manipulation tools, inspired by Laravel Collections.
+- **Command Line Interface (CLI):** The `avel` CLI tool automates common development tasks, such as creating new projects (`avel new`), generating components (`avel make:controller`, `avel make:model`, `avel make:migration`), and creating production packages (`avel build`).
 
-### Laravel-Like Architecture
-
-Keep your WordPress projects organized with a structure similar to native Laravel apps.
-
-### Zero Dependencies
-
-No third-party packages required. AvelPress is built from the ground up for maximum performance, and the entire package is under 150KB.
-
-### Faster Plugin and Theme Development
-
-Speed up development with a clean, maintainable, and reusable structure.
-
-### Service Providers & Configs
-
-Modularize your plugins using service providers, just like in Laravel.
-
-### Database Migrations & Models
-
-Manage your WordPress database changes with elegant migrations and models.
-
-### Simple Routing
-
-Define routes and hooks in a clean and readable way.
-
-### Lightweight & Fast
-
-Optimized for speed and low memory usage.
-
-### Lightweight Collections
-
-Work with data using a simple and efficient Collections implementation, making array and object manipulation easier and more expressive.
-
-### Built-in CLI
-
-Automate tasks and manage your project using the `avel` CLI, inspired by Laravel's Artisan.
-
-## Why Use AvelPress?
-
-- **Reduces boilerplate code** in WordPress development
-- **Brings modern PHP design patterns** to WordPress
-- **Helps teams maintain** large plugin and theme projects with consistency
-- **Ideal for developers** coming from Laravel who want familiar tooling
+All these components are seamlessly integrated into the WordPress ecosystem, allowing you to build scalable and high-quality solutions with ease.
 
 ## Requirements
 
 - PHP 7.4 or higher
 - WordPress 5.0 or higher
-- Basic understanding of Laravel concepts (helpful but not required)
 
 ## Next Steps
 
 Ready to get started? Check out the [Installation](/guide/installation) guide to set up AvelPress in your WordPress plugin or theme.
+
+

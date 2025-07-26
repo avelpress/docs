@@ -1,10 +1,8 @@
 # Database - Getting Started
-
-AvelPress provides a powerful database layer that abstracts WordPress database operations while maintaining compatibility with WordPress core functions. It includes query builders, migrations, and Eloquent-style models.
+AvelPress provides a powerful database layer that abstracts WordPress database operations while maintaining compatibility with WordPress core functions. It includes query builders, migrations, and Laravel 12 Eloquent-style models.
 
 ## Database Connection
-
-AvelPress automatically uses the WordPress database connection, so no additional configuration is required. It uses the same database credentials and connection that WordPress uses.
+AvelPress does not require additional connection configuration, as it uses WordPress's native `$wpdb` to handle database operations. All actions are performed using the same credentials and connection already set up in WordPress, ensuring seamless and secure integration.
 
 ### Accessing the Database
 
