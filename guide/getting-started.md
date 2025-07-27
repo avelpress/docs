@@ -5,7 +5,7 @@ This guide will walk you through creating your first AvelPress application. We'l
 
 ## Installing the AvelPress CLI
 
-To install the AvelPress CLI, follow the official installation instructions in the [Installation Guide](../installation.md). The recommended method is using Composer:
+To install the AvelPress CLI, follow the official installation instructions in the [Installation Guide](/guide/installation.md). The recommended method is using Composer:
 
 ```bash
 composer global require avelpress/avelpress-cli
