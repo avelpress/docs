@@ -2,33 +2,16 @@
 
 This guide will walk you through creating your first AvelPress application. We'll build a simple plugin that demonstrates the core concepts of the framework using the AvelPress CLI.
 
+
 ## Installing the AvelPress CLI
 
-The AvelPress CLI is a powerful command-line tool that helps you scaffold, develop, and build AvelPress applications quickly and efficiently.
-
-### Requirements
-
-- PHP 7.4 or higher
-- Composer
-- WordPress development environment
-
-### Installation
+To install the AvelPress CLI, follow the official installation instructions in the [Installation Guide](../installation.md). The recommended method is using Composer:
 
 ```bash
-# Clone the CLI repository
-git clone https://github.com/avelpress/avelpress-cli.git
-cd avelpress-cli
-
-# Install dependencies
-composer install
-
-# Make the CLI globally available (optional)
-# On Unix/Linux/macOS:
-chmod +x bin/avel
-sudo ln -s /path/to/avelpress-cli/bin/avel /usr/local/bin/avel
-
-# On Windows, add the bin directory to your PATH environment variable
+composer global require avelpress/avelpress-cli
 ```
+
+This ensures you always get the latest stable version and all dependencies are managed automatically.
 
 ## Available CLI Commands
 
@@ -101,14 +84,14 @@ The CLI has created the basic structure with several important files:
 <?php
 
 return [
-    'build' => [
-        'prefixer' => [
-            'namespace_prefix' => 'Acme\\TaskManager\\',
-            'packages' => [
-                'avelpress/avelpress',
-            ]
-        ]
-    ]
+	'build' => [
+		'prefixer' => [
+			'namespace_prefix' => 'Acme\\TaskManager\\',
+			'packages' => [
+				'avelpress/avelpress',
+			]
+		]
+	]
 ];
 ```
 
@@ -536,15 +519,15 @@ The `avelpress.config.php` file controls how your plugin is built:
 <?php
 
 return [
-    'build' => [
-        'prefixer' => [
-            'namespace_prefix' => 'Acme\\TaskManager\\',
-            'packages' => [
-                'avelpress/avelpress',
-                // Add other vendor packages you want to include
-            ]
-        ]
-    ]
+	'build' => [
+		'prefixer' => [
+			'namespace_prefix' => 'Acme\\TaskManager\\',
+			'packages' => [
+				'avelpress/avelpress',
+				// Add other vendor packages you want to include
+			]
+		]
+	]
 ];
 ```
 
@@ -783,15 +766,15 @@ The build process is controlled by `avelpress.config.php`:
 ```php
 <?php
 return [
-    'build' => [
-        'prefixer' => [
-            'namespace_prefix' => 'YourVendor\\YourPackage\\',
-            'packages' => [
-                'avelpress/avelpress',
-                // Other vendor packages
-            ]
-        ]
-    ]
+	'build' => [
+		'prefixer' => [
+			'namespace_prefix' => 'YourVendor\\YourPackage\\',
+			'packages' => [
+				'avelpress/avelpress',
+				// Other vendor packages
+			]
+		]
+	]
 ];
 ```
 
