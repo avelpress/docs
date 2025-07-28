@@ -41,13 +41,6 @@ composer global require avelpress/avelpress-cli
 composer require avelpress/avelpress-cli --dev
 ```
 
-To run the CLI locally, use:
-
-```bash
-./vendor/bin/avel new <vendor>/<name>
-```
-
-
 #### Create a new plugin
 
 ```bash

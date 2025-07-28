@@ -1,6 +1,6 @@
 # Introduction
 
-**AvelPress** is a modern, minimalistic PHP framework designed to revolutionize how you build WordPress plugins and themes. Inspired by Laravel 12, it brings professional structure, boosts your productivity, and integrates web development best practices into the WordPress ecosystem – all without external dependencies or bloat.
+**AvelPress** is a modern, minimalistic PHP framework designed to revolutionize how you build WordPress plugins and themes. It brings professional structure, boosts your productivity, and integrates web development best practices into the WordPress ecosystem – all without external dependencies or bloat.
 
 ## Why AvelPress?
 
