@@ -16,11 +16,37 @@ Before installing AvelPress, make sure you have:
 
 The easiest way to create a new AvelPress project is using the official CLI tool.
 
-#### Install AvelPress CLI globally
+
+#### Install AvelPress CLI (Global or Local)
+
+You can install the AvelPress CLI globally or locally:
+
+**Global installation (recommended):**
 
 ```bash
 composer global require avelpress/avelpress-cli
 ```
+
+> **Note:** If you install globally, make sure your Composer global bin directory is in your system's `PATH` environment variable. Otherwise, the `avel` command will not be available in your terminal. You can check the Composer global bin path with:
+> 
+> ```bash
+> composer global config bin-dir --absolute
+> ```
+> 
+> Add this directory to your `PATH` if needed.
+
+**Local installation (per project):**
+
+```bash
+composer require avelpress/avelpress-cli --dev
+```
+
+To run the CLI locally, use:
+
+```bash
+./vendor/bin/avel new <vendor>/<name>
+```
+
 
 #### Create a new plugin
 
@@ -28,10 +54,18 @@ composer global require avelpress/avelpress-cli
 avel new <vendor>/<name>
 ```
 
+Or, if installed locally:
+
+```bash
+./vendor/bin/avel new <vendor>/<name>
+```
+
 Example:
 
 ```bash
 avel new acme/my-awesome-plugin
+# or
+./vendor/bin/avel new acme/my-awesome-plugin
 ```
 
 This will create a new directory `acme-my-awesome-plugin` with all the necessary files and structure.
