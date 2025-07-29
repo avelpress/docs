@@ -78,18 +78,18 @@ acme-task-manager/
 
 The CLI has created the basic structure with several important files:
 
-#### Build Configuration (`avelpress.config.php`)
+#### Configuration (`avelpress.config.php`)
 
 ```php
 <?php
 
 return [
+	'plugin_id' => 'acme-task-manager',
 	'build' => [
+		'output_dir' => 'dist',
+		'composer_cleanup' => true,
 		'prefixer' => [
-			'namespace_prefix' => 'Acme\\TaskManager\\',
-			'packages' => [
-				'avelpress/avelpress',
-			]
+			'namespace_prefix' => 'Acme\\TaskManager\\'
 		]
 	]
 ];
