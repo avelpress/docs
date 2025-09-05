@@ -1,47 +1,44 @@
 # Getting Started
 
-This guide will walk you through creating your first AvelPress application. We'll build a simple plugin that demonstrates the core concepts of the framework using the AvelPress CLI.
-
+This guide will walk you through creating your first AvelPress plugin using the AvelPress CLI.
 
 ## Installing the AvelPress CLI
 
-To install the AvelPress CLI, follow the official installation instructions in the [Installation Guide](/guide/installation.md). The recommended method is using Composer:
+To install the AvelPress CLI, follow the official installation instructions in the [Installation Guide](installation.md). The recommended method is using Composer:
 
 ```bash
 composer global require avelpress/avelpress-cli
 ```
 
-This ensures you always get the latest stable version and all dependencies are managed automatically.
-
 ## Available CLI Commands
 
 The AvelPress CLI provides the following commands:
 
-- `avel new` - Create a new AvelPress application (plugin or theme)
+- `avel new` - Create a new AvelPress plugin
 - `avel make:controller` - Generate a new controller
 - `avel make:model` - Generate a new model
 - `avel make:migration` - Generate a new database migration
-- `avel build` - Build a distribution package of your application
+- `avel build` - Build a distribution package of your plugin
 
-## Testing Your Plugin
+## Creating Your First Plugin
 
-### 1. Activate the Plugin
+### 1. Create a New Plugin
 
-1. Upload your plugin to `/wp-content/plugins/`
-2. Activate it in the WordPress admin
-
-### 2. Test API Endpoints
-
-You can also create a theme instead:
 ```bash
-avel new acme/my-theme --type=theme
+avel new acme/task-manager
 ```
+
+This will prompt you for:
+- **Display name**: The name shown in WordPress admin (max 80 characters)
+- **Short description**: Brief description of your plugin (max 150 characters)
 
 After creation, navigate to your project and install dependencies:
 ```bash
 cd acme-task-manager
 composer install
 ```
+
+### 2. Project Structure
 
 This will generate the following structure:
 
@@ -50,16 +47,19 @@ acme-task-manager/
 ├── acme-task-manager.php           # Main plugin file
 ├── avelpress.config.php           # Build configuration
 ├── composer.json
+├── readme.txt
 ├── .gitignore
 ├── assets/
 ├── src/
 │   ├── app/
-│   │   ├── Controllers/
-│   │   ├── Http/
+│   │   ├── Http/Controllers/
 │   │   ├── Models/
-│   │   ├── Modules/
 │   │   ├── Providers/
 │   │   │   └── AppServiceProvider.php
+│   │   ├── Admin/
+│   │   │   ├── Setup.php
+│   │   │   └── Menu.php
+│   │   ├── Modules/
 │   │   └── Services/
 │   ├── bootstrap/
 │   │   └── providers.php
@@ -70,8 +70,61 @@ acme-task-manager/
 │   ├── resources/
 │   │   └── views/
 │   └── routes/
-│       └── api.php
+│       ├── api.php
+│       └── admin.php
 └── vendor/                        # Composer dependencies
+```
+
+### 3. Understanding Key Files
+
+#### Build Configuration (`avelpress.config.php`)
+
+```php
+<?php
+
+return [
+    'plugin_id' => 'acme-task-manager',
+    'build' => [
+        'output_dir' => 'dist',
+        'prefixer' => [
+            'enabled' => true,
+            'namespace_prefix' => 'Acme\TaskManager',
+        ]
+    ]
+];
+```
+
+This configuration controls the build process:
+- `plugin_id`: Identifies your plugin for builds
+- `prefixer.enabled`: Whether to add namespace prefixes (prevents conflicts)
+- `namespace_prefix`: The prefix to add to all namespaces when building
+
+#### Main Plugin File (`acme-task-manager.php`)
+
+```php
+<?php
+/**
+ * Plugin Name: Task Manager
+ * Description: A new AvelPress plugin.
+ * Version: 1.0.0
+ * Requires at least: 6.0
+ * Requires PHP: 7.4
+ * Author: Your Name
+ * Text Domain: acme-task-manager
+ * License: GPLv2 or later
+ */
+
+use AvelPress\Avelpress;
+
+defined( 'ABSPATH' ) || exit;
+
+define( 'ACME_TASK_MANAGER_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+
+require ACME_TASK_MANAGER_PLUGIN_PATH . 'vendor/autoload.php';
+
+Avelpress::init( 'acme-task-manager', [
+    'base_path' => ACME_TASK_MANAGER_PLUGIN_PATH . 'src',
+] );
 ```
 
 ### 2. Understanding the Generated Files
@@ -189,27 +242,41 @@ class AppServiceProvider extends ServiceProvider {
 
 Now let's add the functionality to create a task management system using the CLI generators.
 
-#### Database Migration
+## Building Your Plugin
 
-Use the AvelPress CLI to create a migration:
+Use the AvelPress CLI to create controllers, models, and migrations:
 
 ```bash
+# Create a migration
 avel make:migration create_tasks_table
+
+# Create a model
+avel make:model Task --timestamps
+
+# Create a controller
+avel make:controller TaskController --resource
 ```
 
-**Advanced Migration Options:**
+After creating your components, you can build a production-ready distribution:
+
 ```bash
-# Create migration in a specific module
-avel make:migration create_tasks_table --module=TaskManager
-
-# Create migration with app-id prefix for table names
-avel make:migration create_tasks_table --app-id=tm
-
-# Create migration in custom path
-avel make:migration create_tasks_table --path=custom/path/migrations
+avel build
 ```
 
-This will create a migration file in `src/database/migrations/` with a timestamp prefix (e.g., `2024_07_22_143052_create_tasks_table.php`).
+This creates a `dist/` directory with a production-ready version of your plugin, including namespace prefixing to prevent conflicts.
+
+## Testing Your Plugin
+
+1. Upload your plugin to `/wp-content/plugins/`
+2. Activate it in the WordPress admin
+3. Test your API endpoints at `/wp-json/your-plugin/v1/endpoint`
+
+## What's Next?
+
+- [Application Structure](/guide/core/application-structure) - Understand how AvelPress organizes code
+- [Service Providers](/guide/core/service-providers) - Learn about dependency injection
+- [Database Models](/guide/models/eloquent) - Work with database models
+- [Routing](/guide/routing/basic) - Define API and admin routes
 
 The generated file will look like this:
 
@@ -780,45 +847,7 @@ return [
 
 ## What's Next?
 
-Congratulations! You've created your first AvelPress plugin and learned how to use the CLI tools. Here's what you can explore next:
-
 - [Application Structure](/guide/core/application-structure) - Understand how AvelPress organizes code
-- [Service Providers](/guide/core/service-providers) - Learn about dependency injection and service containers
-- [Database Relationships](/guide/database/relationships) - Add relationships between models
-- [JSON Resources](/guide/http/json-resources) - Customize API responses
-- [Validation](/guide/http/validation) - Add request validation
-- [CLI Reference](/guide/core/cli) - Complete CLI command documentation
-
-## Key Concepts Learned
-
-In this tutorial, you learned:
-
-- **CLI Usage** - How to use the AvelPress CLI to scaffold applications
-- **Project Structure** - Understanding the generated directory structure
-- **Application Initialization** - How to bootstrap AvelPress
-- **Service Providers** - How to organize and register services
-- **Migrations** - How to manage database schema changes with CLI generators
-- **Models** - How to create models with various options using CLI
-- **Controllers** - How to generate controllers with CRUD methods
-- **Routing** - How to define API endpoints
-- **Build System** - How to create production-ready distributions
-- **Namespace Prefixing** - How the build system prevents conflicts
-
-## Best Practices
-
-### Project Organization
-- Use modules for complex applications (`--module` option)
-- Follow consistent naming conventions
-- Keep related functionality together
-
-### CLI Usage
-- Use `--resource` flag for CRUD controllers
-- Include `--timestamps` for models that need audit trails
-- Use `--fillable` to explicitly define mass-assignable attributes
-- Use `--app-id` for table prefixing in migrations
-
-### Build and Distribution
-- Always test your build output before distribution
-- Keep your `avelpress.config.php` updated with required packages
-- Use semantic versioning for your releases
-- Include proper documentation in your distribution package
+- [Service Providers](/guide/core/service-providers) - Learn about dependency injection
+- [Database Models](/guide/models/eloquent) - Work with database models
+- [Routing](/guide/routing/basic) - Define API and admin routes
